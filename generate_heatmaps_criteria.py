@@ -318,7 +318,6 @@ def write_scores_for_criteria():
   write_arrays_for_criteria(criteria)
   get_heatmaps_for_criteria_cutoff(criteria=criteria,heatmap_type=heatmap.size)
   criteria = hb_bond_criteria.significant_clusters_sinks
-  print_tprs_and_fprs(criteria)
   write_arrays_for_criteria(criteria)
 
 def get_heatmaps_for_criteria_cutoff(show=True,criteria=hb_bond_criteria.significant_clusters_sinks_cutoff_rmsd_only,heatmap_type = heatmap.size,suffix=None,clus2d=False,topN=200,pattern=None,listres1=None,roc=False,annotate=False):
@@ -400,7 +399,6 @@ def accuracy_metrics(off=0.10):
     print_tprs_and_fprs(criteria,fields=[field],off=off,pick_threshold=pick_threshold,file_handle_auc=file_handle_auc)
   file_handle_auc.close()
 
-
   criterias=[hb_bond_criteria.significant_clusters_sinks,
             hb_bond_criteria.significant_clusters_sinks_cutoff,
             hb_bond_criteria.significant_clusters_sinks_cutoff_rmsd_only]
@@ -444,17 +442,11 @@ def cli():
   annotate=False
   clus2d=False
   roc=False
+  print('sinks=lowest scoring of cluster; sinks_cutoff=lowest scoring of cluster satisfying dhb criterion;sinks_cutoff_rmsd_only=lowest scoring of cluster satisfying rmsd criterion')
   generate_heatmaps_for_all_criteria(annotate=annotate,clus2d=clus2d,roc=roc)
   get_compare_heatmaps_GTX_TTY_states()
   write_scores_for_criteria() #write auc scores
   accuracy_metrics()
 
 if __name__ == '__main__':
-  #cli()
-  #annotate=False
-  #clus2d=False
-  #roc=False
-  #generate_heatmaps_for_all_criteria(annotate=annotate,clus2d=clus2d,roc=roc)
-  #get_compare_heatmaps_GTX_TTY_states()
-  write_scores_for_criteria() #write auc scores
-  #accuracy_metrics()
+  cli()
