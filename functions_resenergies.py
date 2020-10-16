@@ -15,7 +15,6 @@ import matplotlib.pyplot as plt
 import argparse
 from rosetta.core.pose import *
 import math
-from rosetta.core.simple_metrics import metrics
 sf = ScoreFunction()
 sf = get_fa_scorefxn()
 
