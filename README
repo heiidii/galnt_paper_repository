@@ -18,3 +18,18 @@ For property based heatmaps, see generate_property_heatmaps.py
   - The pickled/non-pickled dataframes can alternatively be generated from scorefiles with the 
     util functions in: functions_create_and_save_dataframes.py
 
+Requirements:
+pythion3.6 or higher
+packages:
+numpy
+scipy
+sklearn
+matplotlib
+seaborn
+pandas
+pickle
+os
+sys
+glob
+math
+pyrosetta4 (python3 compatible)
