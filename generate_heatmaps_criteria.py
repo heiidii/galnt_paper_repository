@@ -296,6 +296,7 @@ def write_arrays_for_criteria(criteria,show=True,roc=False,suffix=None,clus2d=Fa
     os.system('mkdir -p results_aucscores')
     filename = 'results_aucscores/aucscores_%s_top%d.txt' %(criteria,topN)
     outf=open(filename,'w')
+    outf.write('#off,field_name,auc\n')
     for field_name in ['interaction_energy','substrate_ca_no_super_rmsd','distance_catalysis_HWUO1B-THR7N','distance_catalysis','substrate_sequon_ca_no_super_rmsd']:#labels_df:
       heatmap_type = heatmap.value
       dictmat = get_topN_sequon_unglycosylated( criteria=criteria , heatmap_type=heatmap_type , column_name = labels_df[field_name],clus2d=clus2d,topN=topN)
@@ -311,7 +312,6 @@ def write_arrays_for_criteria(criteria,show=True,roc=False,suffix=None,clus2d=Fa
     outf.close()
 
 def write_scores_for_criteria():
-  write_arrays_for_criteria(criteria)
   criteria = hb_bond_criteria.significant_clusters_sinks_cutoff
   write_arrays_for_criteria(criteria)
   criteria = hb_bond_criteria.significant_clusters_sinks_cutoff_rmsd_only
@@ -321,7 +321,7 @@ def write_scores_for_criteria():
   print_tprs_and_fprs(criteria)
   write_arrays_for_criteria(criteria)
 
-def get_heatmaps_for_criteria_cutoff(show=True,criteria=hb_bond_criteria.significant_clusters_sinks_GTX_cutoff_rmsd,heatmap_type = heatmap.size,suffix=None,clus2d=False,topN=200,pattern=None,listres1=None,roc=False):
+def get_heatmaps_for_criteria_cutoff(show=True,criteria=hb_bond_criteria.significant_clusters_sinks_cutoff_rmsd_only,heatmap_type = heatmap.size,suffix=None,clus2d=False,topN=200,pattern=None,listres1=None,roc=False,annotate=False):
 
   if pattern is None:
    dictmat = get_topN_sequon_unglycosylated( criteria = criteria ,  heatmap_type =  heatmap_type,clus2d=clus2d,topN=topN)
@@ -397,7 +397,7 @@ def accuracy_metrics(off=0.10):
   fields=['distance_catalysis_HWUO1B-THR7N','substrate_ca_no_super_rmsd','substrate_sequon_ca_no_super_rmsd','interaction_energy']
   thresholds=[-4.0,-1.0,-0.9,34.0]
   for field,pick_threshold in zip(fields,thresholds):
-  print_tprs_and_fprs(criteria,fields=[field],off=off,pick_threshold=pick_threshold,file_handle_auc=file_handle_auc)
+    print_tprs_and_fprs(criteria,fields=[field],off=off,pick_threshold=pick_threshold,file_handle_auc=file_handle_auc)
   file_handle_auc.close()
 
 
@@ -414,33 +414,33 @@ def accuracy_metrics(off=0.10):
   criterias=[hb_bond_criteria.significant_clusters_sinks_cutoff_rmsd_only]
   fprs=[0.075,0.08,0.09,0.10,0.11,0.12]
   for criteria in criterias:
-  field='cluster_size'
-  file_handle_auc=open('results_aucscores/AUCScores_%s_fprs_%s.txt' %(criteria,field),'w')
-  off=0.10
-  for pick_fpr in fprs:
-    print_tprs_and_fprs(criteria,heatmap_type=heatmap.size,off=off,pick_fpr=pick_fpr,file_handle_auc=file_handle_auc)
-  file_handle_auc.close()
+    field='cluster_size'
+    file_handle_auc=open('results_aucscores/AUCScores_%s_fprs_%s.txt' %(criteria,field),'w')
+    off=0.10
+    for pick_fpr in fprs:
+      print_tprs_and_fprs(criteria,heatmap_type=heatmap.size,off=off,pick_fpr=pick_fpr,file_handle_auc=file_handle_auc)
+    file_handle_auc.close()
   criterias=[hb_bond_criteria.significant_clusters_sinks_cutoff_rmsd_only]
   tprs=[0.89,0.90,0.91,0.92,0.93]
   for criteria in criterias:
-  field='cluster_size'
-  file_handle_auc=open('results_aucscores/AUCScores_%s_tprs_%s.txt' %(criteria,field),'w')
-  off=0.10
-  for pick_tpr in tprs:
-    print_tprs_and_fprs(criteria,heatmap_type=heatmap.size,off=off,pick_tpr=pick_tpr,file_handle_auc=file_handle_auc)
-  file_handle_auc.close()
+    field='cluster_size'
+    file_handle_auc=open('results_aucscores/AUCScores_%s_tprs_%s.txt' %(criteria,field),'w')
+    off=0.10
+    for pick_tpr in tprs:
+      print_tprs_and_fprs(criteria,heatmap_type=heatmap.size,off=off,pick_tpr=pick_tpr,file_handle_auc=file_handle_auc)
+    file_handle_auc.close()
 
   criterias=[hb_bond_criteria.significant_clusters_sinks_cutoff]
   for criteria in criterias:
-  field='cluster_size'
-  file_handle_auc=open('results_aucscores/AUCScores_%s_fprs_%s.txt' %(criteria,field),'w')
-  fprs=[0.143,0.14,0.13,0.16,0.17,0.18]
-  off=0.10
-  for pick_fpr in fprs:
-    print_tprs_and_fprs(criteria,heatmap_type=heatmap.size,off=off,pick_fpr=pick_fpr,file_handle_auc=file_handle_auc)
-  file_handle_auc.close()
+    field='cluster_size'
+    file_handle_auc=open('results_aucscores/AUCScores_%s_fprs_%s.txt' %(criteria,field),'w')
+    fprs=[0.143,0.14,0.13,0.16,0.17,0.18]
+    off=0.10
+    for pick_fpr in fprs:
+      print_tprs_and_fprs(criteria,heatmap_type=heatmap.size,off=off,pick_fpr=pick_fpr,file_handle_auc=file_handle_auc)
+    file_handle_auc.close()
 
-if __name__ == '__main__'
+def cli():
   annotate=False
   clus2d=False
   roc=False
@@ -449,3 +449,12 @@ if __name__ == '__main__'
   write_scores_for_criteria() #write auc scores
   accuracy_metrics()
 
+if __name__ == '__main__':
+  #cli()
+  #annotate=False
+  #clus2d=False
+  #roc=False
+  #generate_heatmaps_for_all_criteria(annotate=annotate,clus2d=clus2d,roc=roc)
+  #get_compare_heatmaps_GTX_TTY_states()
+  write_scores_for_criteria() #write auc scores
+  #accuracy_metrics()
