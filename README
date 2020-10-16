@@ -1,0 +1,20 @@
+Repo uploaded on github on: 10/16/2020
+Scripts for post processing data in Rosetta scorefile generated for the work outlined in preprint:
+Structural basis for peptide substrate specificities of glycosyltransferase GalNAc-T2
+Sai Pooja Mahajan , Yashes Srinivasan , Jason W Labonte , Matthew P DeLisa , and Jeffrey J. Gray 
+doi:10.1101/2020.06.25.171371
+
+Scripts may not work out of the box. Scripts are shared for transparency.
+
+For data in the paper, contact first author or owner of this repository.
+
+The script generate_heatmaps_criteria.py will generate all heatmaps in figures 2-5. 
+   - This script requires scorefiles generated as outlined in the paper (over 361 sequons).
+   - Scorefiles are available upon request.
+
+For property based heatmaps, see generate_property_heatmaps.py
+  - This script requires data from score files and additional properties such as shape complementarity
+    available as pickled dataframes upon request.
+  - The pickled/non-pickled dataframes can alternatively be generated from scorefiles with the 
+    util functions in: functions_create_and_save_dataframes.py
+
