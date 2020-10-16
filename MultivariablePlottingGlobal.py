@@ -18,9 +18,6 @@ info['cfield'] = 'interaction_energy'
 info['z3field'] = 'substrate_sequon_ca_no_super_rmsd'
 info['description'] = 'description'
 
-info['glyc_yfield'] = 'distance_catalysis_UDP2OPB-THR7N'
-info['glyc_z2field'] = 'distance_catalysis_UDP3OPB-THR7N'
-
 categories ={}
 categories['non-polar']=['LEU','VAL','ALA','ILE','MET','PRO','GLY']
 #categories['gly']=['GLY']
@@ -30,28 +27,4 @@ categories['polar']=['SER','THR','ASN','GLN']
 categories['acidic']=['ASP','GLU']
 categories['basic']=['ARG','LYS','HIS']
 
-runtype='test'
-dpi = {'test':300,'production':600}
 aalist = ['L','V','A','I','M','P','G','F','W','Y','S','T','N','Q','H','K','R','D','E']
-cdictaa={}
-for aa in aalist:
-    cdictaa[aa] = 'DeepPink'
-cdictaa['L'] = 'IndianRed'
-cdictaa['V']='LightCoral'
-cdictaa['A']='DarkRed'
-cdictaa['I']='LightSalmon'
-cdictaa['M']='DarkSalmon'
-cdictaa['P']='Red'
-cdictaa['G']='Orange'
-cdictaa['F']='Khaki'
-cdictaa['W']='Khaki'
-cdictaa['Y']='Khaki'
-cdictaa['S']='Violet'
-cdictaa['T']='Fuchsia'
-cdictaa['N']='Lavender'
-cdictaa['Q']='PowderBlue'
-cdictaa['H']='PowderBlue'
-cdictaa['K']='MediumSlateBlue'
-cdictaa['R']='MediumSlateBlue'
-cdictaa['D']='PaleGreen'
-cdictaa['E']='PaleGreen'

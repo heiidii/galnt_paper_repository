@@ -457,24 +457,6 @@ def plot_heatmaps_from_pickled_dataframe_energies(pickledfiles='PickleFiles/2020
   else:
     process_res_energies_to_heatmaps(listofdfs,listofdfs_energies_res,criteria=criteria,cutoff=rmsd_cutoff,N=N,basename=basename,show=show)
 
-def write_metrics(keys_true_positives,keys_true_negatives,keys_false_positives,keys_false_negatives,file_handle=None):
-  tp=len(keys_true_positives)
-  tn=len(keys_true_negatives) #2 cases where the data is not entered correctly in the matrix
-  fp=len(keys_false_positives)
-  fn=len(keys_false_negatives)
-  acc = float(tp+tn)/(tp+tn+fp+fn)
-  prec=float(tp)/(tp+fp)
-  rec=float(tp)/(tp+fn)
-  tpr=float(tp)/(tp+fn)
-  tnr=float(tn)/(tn+fp)
-  bal_acc=0.5*(tpr+tnr)
-  fpr=float(fp)/(tn+fp)
-  infd=tpr+tnr-1.0
-  if not file_handle is None:
-     file_handle.write('TP/TN/FP/FN %d/%d/%d/%d\n' %(tp,tn,fp,fn))
-     file_handle.write('Acc/Prec/tpr/tnr/fpr %f/%f/%f/%f/%f\n'%(acc,prec,tpr,tnr,fpr))
-     file_handle.write('bal_acc/infd %f/%f\n' %(bal_acc,infd))
-
 def plot_heatmaps_from_pickled_dataframe(pickledfiles='PickleFiles/20200207/UnglycosylatedPeptideData_Filtered_ClusteredDBScan_UpdateDist_plusone_*.p',basename='results/heatmaps_rmsd_filtered/',N=10,rmsd_cutoff=1.0,criteria='rmsd_less_than',prop = 'dist_498OG-288O',cmap=None,off=0.10,plotdist=False,fitstuff=False,reverse=False,maxmin=None,annotate=False,suffix=None,applyfraction=False,show=True,sc_cutoff=None,rocs=False,heatmaps=True,off_list=[0.0,0.05,0.10,0.20,0.30,0.40,0.50,0.55],positionwise=True,pointplot=False,by='median',pos=['+1'],listres1=aalist,boxplot=True,pick_fpr=None, pick_tpr=0.92,pick_threshold=None):
   from functions_matrices_from_clusters import get_roc_auc_for_dict
   if cmap is None:
@@ -572,24 +554,15 @@ def plot_heatmaps_from_pickled_dataframe(pickledfiles='PickleFiles/20200207/Ungl
       print(outfile)
       if len(list(dicttemp.values()))<10: continue
       dictmat_base,dictmat_compare,list_fps,list_fns,list_tps,list_tns = get_false_positives_and_false_negatives(dicttemp,value_name,off=off,pick_tpr=pick_tpr,outfile=outfile,pick_threshold=pick_threshold,pick_fpr=pick_fpr,file_handle_auc=file_handle_auc)
-      #write_metrics(list_tps,list_tns,list_fps,list_fns,file_handle=file_handle)
-
+      
       suffix = '%s_' %prop + '_%s' %skey + '_off%f_pick_tpr%f' %(off,pick_tpr)
       if not pick_fpr is None:
         suffix = '%s_' %prop + '_%s' %skey + '_off%f_fpr%f' %(off,pick_fpr)
       if not pick_threshold is None:
         suffix = '%s_' %prop + '_%s' %skey + '_off%f_threshold%f' %(off,pick_threshold)
-      #heatmap_topN_sequon(dictmat_compare , heatmap_type=heatmap.compare, criteria=criteria , filterTopN=True ,suffix=suffix,annotate=False)
+      heatmap_topN_sequon(dictmat_compare , heatmap_type=heatmap.compare, criteria=criteria , filterTopN=True ,suffix=suffix,annotate=False)
       
   if rocs:
     file_handle.close()
     file_handle_auc.close()
 
-if __name__=='__main__':
-  #for aa in ['S','T','P','A','G']:
-    #for by in ['min']:
-    #plot_heatmaps_from_pickled_dataframe(pickledfiles='PickleFiles/20200207/UnglycosylatedPeptideData_Filtered_ClusteredDBScan_UpdateDist_plusone_A%sT*APRC.p' %aa,prop = 'sc_shapecomplementarity',N=5,rmsd_cutoff=1.0,criteria='rmsd_less_than',reverse=False,rocs=False,heatmaps=False,positionwise=False,show=True,suffix=aa,pointplot=True,by='median',maxmin=[0.65,0.80])
-  for prop in ['psi_498','psi_499','phi_499','psi_500','phi_500']:
-      plot_heatmaps_from_pickled_dataframe(pickledfiles='PickleFiles/20200207/UnglycosylatedPeptideData_Filtered_ClusteredDBScan_UpdateDist_plusone_A[AVTPGS]T*APRC.p' ,prop = prop,N=5,rmsd_cutoff=1.0,criteria='rmsd_less_than',reverse=False,rocs=False,heatmaps=False,positionwise=False,show=True,suffix=aa,pointplot=True,by='sd',pos='-1')
-
-  #plot_heatmaps_from_pickled_dataframe(pickledfiles='PickleFiles/20200207/UnglycosylatedPeptideData_Filtered_ClusteredDBScan_UpdateDist_plusone_AST*APRC.p',prop = 'dist_500CA-287CB',N=5,rmsd_cutoff=1.0,criteria='rmsd_less_than',reverse=False,rocs=False,heatmaps=False,positionwise=False,show=False,suffix='S',pointplot=True)
