@@ -1,12 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from itertools import cycle
-
-from sklearn import svm, datasets
 from sklearn.metrics import roc_curve, roc_auc_score
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import label_binarize
-from scipy import interp
 
 from matplotlib import rc
 
