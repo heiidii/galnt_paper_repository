@@ -18,16 +18,6 @@ from DataSortingFiltering import *
 
 sns.set(style="ticks")
 
-#fields = None
-#labels = None
-#info = None
-#labels_df = None
-#runtype=None
-#dpi = None
-#nooutput = []
-
-from MultivariablePlottingGlobal import *
-
 def finishup():
   f=open('nooutput.txt','a')
   d = date.today()
