@@ -11,12 +11,6 @@ pfile_exp_array = "PickleFiles/experimentaldata_19x19array.p"
 npfile_exp_array = "PickleFiles/nptxt_experimentaldata_19x19array.txt"
 pfile_exp_onoff_array = "PickleFiles/experimentaldata_onoff_19x19array.p"
 
-pfile_mc_cutoff = "PickleFiles/unglycosylateddata_19x19array_interaction_energy_distancecutoff_hypo2.p"
-pfile_s2_cutoff = "PickleFiles/unglycosylateddata_19x19array_interaction_energy_distancecutoff_State2_hypo3.p"
-pfile_mcs2delta = "PickleFiles/unglycosylateddata_19x19array_interaction_energy_distancecutoff_MCDeltaState2_hypo3.p"
-pfile_glyc = "PickleFiles/glycosylationyashes_19x19array.p"
-
-
 d = date.today()
 datestring = d.isoformat()
 colors= {'H1-Glyc':'orangered','H2-Aglyc':'limegreen','H3-Aglyc':'royalblue'}
@@ -56,46 +50,7 @@ def get_experimental_data_postionwise_mean(aa_list,position_list=[-1,1]):
       pos_array[ipos,iaa] = get_experimental_data_for_pos_residue(aa,pos)
   return pos_array
 
-def scatterplot_A_vs_B(X,Y,xlabel='Predicted',ylabel='Observed',suffix='ExpvsSim'):
-      #yexp_more = pickle.load(open("experimentaldatamutants_"+entry+".p",'rb'))
-      #print(yexp_more.shape)
-      X_ravel = X.ravel()
-      Y_ravel = Y.ravel()
-      fig,ax = plt.subplots(figsize=(16,16))
-      ax.spines['bottom'].set_color('black')
-      ax.spines['top'].set_color('black') 
-      ax.spines['right'].set_color('black')
-      ax.spines['left'].set_color('black')
-      fig.suptitle(datestring + '\n%s' %suffix,fontsize=10)
-      plt.plot([0,1],[0,1],color='dimgrey',linestyle='dashed')
-      plt.scatter(X_ravel, Y_ravel,color='xkcd:aquamarine',s=100,edgecolor='black',alpha=1)
-      plt.xticks(fontsize=60)
-      plt.yticks(fontsize=60)
-      plt.ylim(-0.02,1.02)
-      plt.xlim(-0.02,1.02)
-      axis_font = { 'size':70}
-      plt.xlabel(xlabel,**axis_font)
-      plt.ylabel(ylabel,**axis_font)
-      plt.tight_layout()
-      plt.subplots_adjust(top=0.9)
-      plt.savefig("results/compare/XvsY_"+ suffix + ".png",transparent=True,dpi=fig.dpi)
-      plt.show()
-
-def parsecsvfile_mutants(infile):
-  #getlines 2-Wt and 18-K207G
-  annotations = S2M.getannotations()
-  linestoget = range(1,18,4)
-  lineidentity = ['WTReplicate','K207H','K207F','K207W','K207G']
-  print(linestoget)
-  f=open(infile,'r')
-  lines = f.readlines()
-  f.close()
-  for i,linenum in enumerate(linestoget):
-    extractline = [float(t) for t in lines[linenum].split('\n')[0].split(',')[1:]]
-    print(lineidentity[i],extractline)
-    pickle.dump(np.array(extractline),open("experimentaldatamutants_"+lineidentity[i]+".p",'wb'))
-    
-  def plotexperimentaldatafrompickle(lineidentity):
+def plotexperimentaldatafrompickle(lineidentity):
     yexp = pickle.load(open(pfile_exp_array,'rb'))
     iT = S2M.listres.index('T')
     yexp_T = np.ravel(yexp[iT,:])
@@ -223,103 +178,6 @@ def plotscattergeneric3(x1,y1,x2,y2,x3,y3):
   plt.ylim(0,-50)
   plt.show()
 
-def getunglycosylateddatafromfiles_mc_cutoff(serialize=True):
-  df_mc , matrix_mc, superdata = S2M.unglycosylated_MC_cutoff_prefiltereddata()
-  if serialize:
-    f1 = open("unglycosylateddata_19x19array_interaction_energy_distancecutoff_hypo2.p",'wb')
-    pickle.dump(matrix_mc,f1)
-    f1.close()
-    f3 = open("unglycosylateddata_dict_interaction_energy_distancecutoff_hypo2.p",'wb')
-    pickle.dump(superdata,f3)
-    f3.close()
-  return df_mc , matrix_mc
-
-def getunglycosylatedfrompickle(pfile):
-    x_ = pickle.load(open(pfile,'rb'))
-    return x_
-
-def getunglycosylateddatafromfiles_s2(serialize=True):
-  S2M.setup()
-  df_ , matrix_, superdata = S2M.unglycosylated_State2_prefiltereddata()
-  if serialize:
-    f1 = open("unglycosylateddata_19x19array_interaction_energy_distancecutoff_State2_hypo3.p",'wb')
-    pickle.dump(matrix_,f1)
-    f1.close()
-    f3 = open("unglycosylateddata_dict_interaction_energy_distancecutoff_State2_hypo3.p",'wb')
-    pickle.dump(superdata,f3)
-    f3.close()
-  return df_ , matrix_
-
-def getunglycosylateddatafromfiles_mcs2delta(pfile_mc_cutoff,pfile_s2_cutoff,serialize=True):
-    matrix_mc = getunglycosylatedfrompickle(pfile_mc_cutoff)    
-    matrix_s2 = getunglycosylatedfrompickle(pfile_s2_cutoff) 
-    matrix_mc_s2delta = S2M.unglycosylated_MC_cutoff_DeltaS2_prefiltered(matrix_mc,matrix_s2)
-    if serialize:
-      f1 = open("unglycosylateddata_19x19array_interaction_energy_distancecutoff_MCDeltaState2_hypo3.p",'wb')
-      pickle.dump(matrix_mc_s2delta,f1)
-      f1.close()
-    return matrix_mc_s2delta
-
-#def threshold_and_normalize_glycosylation_data():   
-def plot_roc_curve_area(pfile='',label='yashes'):
-  str_score = ""
-  fpr = [0.0,1.0]
-  tpr = fpr
-  x_glyc, y_expdata,y_expdata_onoff = getexperimentaldatafrompickle(pfile_exp)
-  data_y = np.ravel(y_expdata)
-  data_y_onoff = np.ravel(y_expdata_onoff)
-  #annotations = S2M.getannotations()
-  filename = "pic.png"
-
-  if label=='yashes':
-     filename="roccurve_yashes.png"
-     title=''
-     data_x = -1.0 * np.ravel(x_glyc)
-     import functions_roc_calculate as roccalc
-     fpr,tpr,thresholds,score = roccalc.simplistic_roc_curve(data_y_onoff,data_x)    
-     str_score = "AUC = %4.3f" %score
-     title = "Glycosylated Peptide\n"+datestring
-
-  if label=='mc_cutoff':
-     filename="roccurve_mc_cutoff.png"
-     x_ = getunglycosylatedfrompickle(pfile)
-     data_x = -1.0 * np.ravel(x_)
-     import functions_roc_calculate as roccalc
-     fpr,tpr,thresholds,score = roccalc.simplistic_roc_curve(data_y_onoff,data_x)
-     str_score = "AUC = %4.3f" %score
-     title = "Aglycosylated Peptide\nMichaelisComplex State + Distance Cutoff\n"+datestring
-
-  if label=='s2':
-     filename="roccurve_s2_cutoff.png"
-     x_ = getunglycosylatedfrompickle(pfile)
-     data_x = -1.0 * np.ravel(x_)
-     import functions_roc_calculate as roccalc
-     fpr,tpr,thresholds,score = roccalc.simplistic_roc_curve(data_y_onoff,data_x)
-     str_score = "AUC = %4.3f" %score
-     title = "Aglycosylated Peptide\nState 2\n"+datestring
-  if label=='mc_cutoff_s2delta':
-     filename="roccurve_mcs2delta_cutoff.png"
-     x_ = getunglycosylatedfrompickle(pfile)
-     data_x = -1.0 * np.ravel(x_)
-     import functions_roc_calculate as roccalc
-     fpr,tpr,thresholds,score = roccalc.simplistic_roc_curve(data_y_onoff,data_x)
-     str_score = "AUC = %4.3f" %score
-     title = "Aglycosylated Peptide\nMichaelisComplex State + Distance Cutoff + State2 Cutoff\n"+datestring
-  fig,ax = plt.subplots(figsize=(12,12))
-  fig.suptitle(title,fontsize=25)
-  plt.plot([0.0,1.0],[0.0,1.0],color='black',linestyle='dashed',linewidth=2)
-  plt.plot(fpr,tpr,color='mediumvioletred',linewidth=4)
-  plt.text(0.6,0.1,str_score,size=40,color='black')
-  plt.ylim(0.0,1.0)
-  plt.xlim(0.0,1.0)
-  axis_font = { 'size':35}
-  plt.xlabel("False Positive Rate (FPR)",**axis_font)
-  plt.ylabel("True Positive Rate (TPR)",**axis_font)
-  plt.tick_params(axis='both',labelsize=35)
-  plt.tight_layout()
-  plt.subplots_adjust(top=0.85)
-  plt.savefig(filename,transparent=True,dpi=fig.dpi)
-  plt.show()
 
 def plotcombinedroc(pfilesdict,filename):
   x_glyc, y_expdata,y_expdata_onoff = getexperimentaldatafrompickle(pfile_exp)

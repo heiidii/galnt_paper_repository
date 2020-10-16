@@ -3,7 +3,6 @@ import glob
 import sys
 import seaborn as sns
 from MultivariablePlotting import *
-from DataSortingFiltering import getdata_xyzc
 from MultivariablePlottingGlobal import *
 logging.basicConfig(filename='scatterplot.log',level=logging.DEBUG)
 from MatrixPlotting import *
@@ -214,18 +213,6 @@ def get_roc_auc_for_dict(dictmat,value_name,off=0.00):
     import functions_roc_calculate as roccalc
     return roccalc.simplistic_roc_curve(data_y_onoff,data_x)
 
-def get_minmax_matrix(mat,default_value):
-    vmax = round(np.amax(mat[mat != default_value ]))
-    vmin = round(np.amin(mat[mat != default_value ]))
-
-    for i in range(19):
-      for j in range(19):
-        if mat[i,j]==default:
-          mat[i,j]=0.0
-        else:
-          mat[i,j] = round((mat[i,j]-vmin)/(vmax-vmin))
-
-    return mat
 
 def plot_roc_auc_for_dict(dictmat,name_suffix=None,show=False,title=None,metadata=None,value_name='interaction_energy',off=0.0,clus2d=False):
   str_score = ""
@@ -477,38 +464,6 @@ def categorize_exp_data(array):
     i+=1
   return ret_array.reshape(array.shape)
 
-def feature_importance(listofdictmats,name_suffix=None,show=False,title=None,metadata=None,list_value_names=['interaction_energy']):
-  name_suffix = '' 
-
-  print(name_suffix)
-  from compare_simulations_to_experiments import getexperimentaldatafrompickle,pfile_exp
-  x_glyc, y_expdata,y_expdata_onoff = getexperimentaldatafrompickle(pfile_exp)
-  y_expdata_cat = categorize_exp_data(y_expdata)
-  data_y_cat = np.ravel(y_expdata_cat)#np.ravel(y_expdata)
-  data_y_onoff = np.ravel(y_expdata_onoff)
-  filename = "pic.png"
-
-  combined_mat = np.full((361,len(list_value_names)),0)
-  ivals = 0
-  for dictmat,value_name in zip(listofdictmats,list_value_names):
-    default_value = get_default_value(value_name)
-
-    mat = np.full((19,19), default_value ,dtype=float)
-    df,mat =  makematrixfordict(dictmat,mat)
-    combined_mat[:,ivals] = mat.ravel()
-    
-    ivals += 1
-  import functions_roc_calculate as roccalc
-  #roccalc.feature_selection_trees(data_y_onoff,combined_mat)
-  #roccalc.feature_selection_rfe(data_y_onoff,combined_mat)
-  roccalc.decision_tree_regression(data_y_cat,combined_mat,list_value_names)
-
-def mat_for_dict(dictmat, value_name):    
-  default_value = get_default_value(value_name)
-  mat = np.full((19,19), default_value ,dtype=float)
-  df,mat =  makematrixfordict(dictmat,mat)
-  return df, mat
-
 def plot_heatmap_for_dict(dictmat,name_suffix=None,show=False,title=None,metadata=None,value_name='interaction_energy',vmax=None,vmin=None,label_colorbar = None,mask=None,annotate=False,clus2d=False,listres1=None,cbar_kws_fmt=None,fmt='0.1f'):
 
   default_value = get_default_value(value_name)
@@ -606,40 +561,6 @@ def get_value_for_cluster(df,column_name,clus,centroids,labels,core_samples_,typ
     return None
 
 
-def get_topN_sequon_glycosylated(residues=['all'],topN=20,heatmap_type=heatmap.value):
-  pattern = 'PackandRelax_498*/glycosylated_hr/score.sc'
-  files = get_files(pattern,size=0.110 )
-
-  dictmat={}
-  for curfile in files:
-    print(curfile)
-
-    df = get_filtered_combined_dataframe([curfile],filterTopN=True)
-    sinks = get_sinks_for_columns(df,type_value='sinks',columns = [ 'interaction_energy'] )
-    #print(sinks)
-    dictmat[df['key'][0]] = sinks[0]
-  
-  return dictmat
-
-
-def get_topN_sequon_glycosylated(column_name,residues=['all'],topN=20,heatmap_type=heatmap.value):
-  pattern = 'PackandRelax_498*/glycosylated_hr_bk/score.sc'
-  files = get_files(pattern,size=0.110 )
-
-  dictmat={}
-  for curfile in files:
-    print(curfile)
-
-    df = get_filtered_combined_dataframe([curfile],filterTopN=True)
-    clus = 0
-    labels = [ clus for _ in range(0,df.shape[0]) ]
-    sink_value =  get_sink(df,column_name,labels,clus,type_value='sinks')
-    print('sinks',sink_value)
-    dictmat[df['key'][0]] = sink_value
-
-  return dictmat
-
-
 def get_topN_sequon_unglycosylated(pattern = 'PackandRelax_498*/unglycosylated/score.sc',residues=['all'],cluster=True,clusterOnly=True,topN=200,column_name=labels_df['distance_catalysis_HWUO1B-THR7N'],heatmap_type=heatmap.value,criteria=hb_bond_criteria.largest_cluster,cluster_size_sorted_id=0,usePickled=False,clus2d=False):
 
   if usePickled:
@@ -726,8 +647,7 @@ def get_topN_sequon_unglycosylated(pattern = 'PackandRelax_498*/unglycosylated/s
                 dictmat[df['key'][0]] = sorted_d[clus_key]
 
       else:
-      # criteria==hb_bond_criteria.significant_clusters_cutoff or criteria==hb_bond_criteria.significant_clusters_cutoff_rmsd or criteria==hb_bond_criteria.significant_clusters_sinks_cutoff_rmsd or  criteria==hb_bond_criteria.significant_clusters_sinks_TopKCal_cutoff_rmsd  or criteria==hb_bond_criteria.significant_clusters_sinks_cutoff or  criteria==hb_bond_criteria.significant_clusters_sinks_TopKCal_cutoff or criteria==hb_bond_criteria.significant_clusters_sinks_cutoff_rmsd_only:
-
+      
             type_value = get_type_value(criteria) 
             #print("CRITERIA: ",criteria,type_value)
             list_of_keys = list(sorted_d.keys())

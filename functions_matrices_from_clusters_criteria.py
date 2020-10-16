@@ -3,8 +3,6 @@ from enum import Enum, unique , auto
 hb_cutoff = 4.0
 rmsd_cutoff = 1.0
 sequonrmsd_cutoff = 0.9
-ie_cutoff = -37
-ie_cutoff_2 = -29
 
 class hb_bond_criteria(Enum):
   significant_clusters_cutoff = auto()
@@ -80,8 +78,6 @@ def check_criteria_decoy(values,criteria=hb_bond_criteria.significant_clusters_s
 
   if criteria==hb_bond_criteria.significant_clusters_sinks_GTX_cutoff_rmsd or  criteria==hb_bond_criteria.significant_clusters_sinks_GTX_TopKCal_cutoff_rmsd:
       return ( value1 <= hb_cutoff and value2 >= rmsd_cutoff )
-  if criteria==hb_bond_criteria.significant_clusters_sinks_cutoff_rmsd_ie:
-      return ( value1 >= ie_cutoff and value1 <= ie_cutoff_2 and value2 <= rmsd_cutoff )
 
 def check_hb_criteria(centroids,sizedict,sizedict_normalized,criteria=hb_bond_criteria.significant_clusters,axis=1):
   fieldname = 'distance_catalysis_HWUO1B-THR7N'
@@ -109,13 +105,6 @@ def check_hb_criteria(centroids,sizedict,sizedict_normalized,criteria=hb_bond_cr
       if sizedict_normalized[k]<0.05: continue
       if k == -1: continue
       if centroids[k,axis_rmsd]<rmsd_cutoff:
-        cluster_ids.append(k)
-
-  if criteria==hb_bond_criteria.significant_clusters_sinks_cutoff_rmsd_ie:
-    for k in sizedict:
-      if sizedict_normalized[k]<0.05: continue
-      if k == -1: continue
-      if centroids[k,axis_rmsd]<rmsd_cutoff and centroids[k,axis_ie]<ie_cutoff and centroids[k,axis_ie]>ie_cutoff_2:
         cluster_ids.append(k)
 
   if criteria==hb_bond_criteria.significant_clusters_cutoff_sequonrmsd_only or criteria==hb_bond_criteria.significant_clusters_sinks_cutoff_sequonrmsd_only or  criteria==hb_bond_criteria.significant_clusters_sinks_TopKCal_cutoff_sequonrmsd_only:
