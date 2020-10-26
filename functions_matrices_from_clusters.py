@@ -464,14 +464,14 @@ def categorize_exp_data(array):
     i+=1
   return ret_array.reshape(array.shape)
 
-def plot_heatmap_for_dict(dictmat,name_suffix=None,show=False,title=None,metadata=None,value_name='interaction_energy',vmax=None,vmin=None,label_colorbar = None,mask=None,annotate=False,clus2d=False,listres1=None,cbar_kws_fmt=None,fmt='0.1f'):
+def plot_heatmap_for_dict(dictmat,name_suffix=None,show=False,title=None,metadata=None,value_name='interaction_energy',vmax=None,vmin=None,label_colorbar = None,mask=None,annotate=False,clus2d=False,listres1=None,cbar_kws_fmt=None,fmt='0.1f',dtype=float):
 
   default_value = get_default_value(value_name)
   if listres1 is None:
-    mat = np.full((19,19), default_value ,dtype=float)
+    mat = np.full((19,19), default_value ,dtype=dtype)
     df,mat =  makematrixfordict(dictmat,mat)
   else:
-    mat = np.full((len(listres1),19), default_value ,dtype=float)
+    mat = np.full((len(listres1),19), default_value ,dtype=dtype)
     df,mat =  makematrixfordict(dictmat,mat,listres_1=listres1)
 
   print(df)
@@ -770,9 +770,12 @@ def heatmap_topN_sequon(dictmat,heatmap_type,criteria=None,column_name='',filter
         plot_roc_auc_for_dict(dictmat,name_suffix=name_suffix,value_name='delta',show=show,off=off)
 
     if heatmap_type==heatmap.exp:
-      print("EXP")
-      cbar_kws_fmt = '%.0f%%'
-      plot_heatmap_for_dict(dictmat,name_suffix,value_name='experimental',show=show,vmax=100.0,vmin=0.0,label_colorbar = clabel,listres1=listres1,cbar_kws_fmt=cbar_kws_fmt,annotate=annotate,fmt='d')
+      max_value = max([dictmat[key] for key in dictmat])
+      if max_value > 1.0: #using percentages
+        cbar_kws_fmt = '%.0f%%'
+        plot_heatmap_for_dict(dictmat,name_suffix,value_name='experimental',show=show,label_colorbar = clabel,listres1=listres1,cbar_kws_fmt=cbar_kws_fmt,annotate=annotate,fmt='d',dtype=int)
+      else:
+        plot_heatmap_for_dict(dictmat,name_suffix,value_name='experimental',show=show,label_colorbar = clabel,listres1=listres1,annotate=annotate,fmt='0.2f')
 
     if heatmap_type==heatmap.compare:
       plot_heatmap_for_dict(dictmat,name_suffix,value_name='compare',show=show,vmax=1.0,vmin=0.0,label_colorbar = clabel,clus2d=clus2d,annotate=annotate,listres1=listres1)

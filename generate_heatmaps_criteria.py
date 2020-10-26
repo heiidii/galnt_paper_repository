@@ -362,11 +362,11 @@ def get_heatmaps_for_PTX_GTX_criteria(show=False,roc=False,annotate=False,patter
           heatmap_topN_sequon(dictmat_TTY , heatmap_type=heatmap_type, criteria=None, filterTopN=True , show=show,roc=False,suffix='delta_PTX_TTY',annotate=annotate,listres1=listres1)
 
 
-def get_experimental_heatmap(show=False,annotate=False):
+def get_experimental_heatmap(show=False,annotate=False,percent=True,round_=True,suffix='percent'):
   import compare_simulations_to_experiments as CompSE
-  exp_dictmat = CompSE.getexperimentaldatafrompickle_dict(percent=True)
+  exp_dictmat = CompSE.getexperimentaldatafrompickle_dict(percent=percent,round_=round_)
   heatmap_type=heatmap.exp
-  heatmap_topN_sequon(exp_dictmat , heatmap_type=heatmap_type, criteria=None, filterTopN=False , show=show,roc=False,suffix='exp2018',annotate=annotate)
+  heatmap_topN_sequon(exp_dictmat , heatmap_type=heatmap_type, criteria=None, filterTopN=False , show=show,roc=False,suffix=suffix,annotate=annotate)
 
 
 def generate_heatmaps_for_all_criteria(annotate=False,clus2d=False,roc=False):

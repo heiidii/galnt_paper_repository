@@ -46,9 +46,9 @@ def plotdataframesingle(df,outfile=None,show=True,cbar=False,cmap='Purples',pale
   if not cbar_kws_fmt is None:
     cbar_kws = {"shrink": cbar_shrink, 'format':cbar_kws_fmt}
   if vlimits is None:
-      imaxes = sns.heatmap(df_corr,cmap = cmap,linewidth=0.05, square=True, ax=curaxes, cbar_kws=cbar_kws,xticklabels=1,yticklabels=1,annot=annotate,fmt='.1f',mask=mask)
+      imaxes = sns.heatmap(df_corr,cmap = cmap,linewidth=0.05, square=True, ax=curaxes, cbar_kws=cbar_kws,xticklabels=1,yticklabels=1,annot=annotate,fmt=fmt,mask=mask)
   else:
-      imaxes = sns.heatmap(df_corr,cmap = cmap,linewidth=0.05, square=True, ax=curaxes, cbar_kws=cbar_kws,xticklabels=1,yticklabels=1,annot=annotate,fmt='.1f',mask=mask, vmin=vlimits[0],vmax=vlimits[1])
+      imaxes = sns.heatmap(df_corr,cmap = cmap,linewidth=0.05, square=True, ax=curaxes, cbar_kws=cbar_kws,xticklabels=1,yticklabels=1,annot=annotate,fmt=fmt,mask=mask, vmin=vlimits[0],vmax=vlimits[1])
   #IMPORTANT: needed with matplotlib 3.1.1 orw hatever is the latest version
   plt.yticks(rotation=0)
   plt.xticks(rotation=0)

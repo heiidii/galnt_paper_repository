@@ -62,16 +62,20 @@ def getexperimentaldatafrompickle(pfile=pfile_exp):
     y_expdata_df, y_expdata = S2M.makematrixfordict(superdata['experimentalresults_2018']['true_signal'],y_expdata)
     return x_glyc, y_expdata,y_expdata_onoff
 
-def getexperimentaldatafrompickle_dict(pfile=pfile_exp,percent=False):
+def getexperimentaldatafrompickle_dict(pfile=pfile_exp,percent=False,round_=True):
     superdata = {}
     superdata = pickle.load(open(pfile,'rb'))
     dictmat = superdata['experimentalresults_2018']['true_signal']
     if percent:
       dictmat_ = {}
       for key in dictmat:
-        dictmat_[key] = dictmat[key]*100.0
+        value = dictmat[key]*100.0
+        if round_:
+          dictmat_[key]=int(value)
+          print(key,dictmat_[key])
+        else:
+          dictmat_[key]=value
       del dictmat
       dictmat = dictmat_
     return dictmat
-
 
